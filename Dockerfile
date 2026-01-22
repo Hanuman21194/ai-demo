@@ -1,34 +1,32 @@
-# Use a slim version of Python for a smaller, faster image
 FROM python:3.10-slim
 
-# Set working directory
 WORKDIR /app
 
-# Install system dependencies (needed for some AI libraries)
+# Install basic system dependencies
 RUN apt-get update && apt-get install -y \
     build-essential \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy only the requirements first to leverage Docker cache
+# Copy and install requirements
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy your 3 core files and the entrypoint
-# (Docker will automatically ignore files listed in your .dockerignore)
+# Copy all files
 COPY . .
 
-ENV OPENAI_API_KEY=""
-ENV gpt_model=""
-ENV SYSTEM_PROMPT=""
+# --- NEW FIX: Python-based line ending correction ---
+# This replaces dos2unix. It removes Windows \r characters from the script.
+RUN python3 -c "import os; content = open('entrypoint.sh', 'rb').read().replace(b'\r\n', b'\n'); open('entrypoint.sh', 'wb').write(content)"
+RUN chmod +x entrypoint.sh
 
-RUN dos2unix entrypoint.sh && chmod +x entrypoint.sh
-# Expose the ports for both apps
+# Environment variables (Best practice: pass these at runtime, not in Dockerfile)
+ENV OPENAI_API_KEY="placeholder"
+ENV gpt_model="gpt-4o"
+ENV SYSTEM_PROMPT="You are a helpful assistant."
+
 EXPOSE 8000
 EXPOSE 8501
 
-# Make the script executable
-RUN chmod +x entrypoint.sh
-
-# Run both apps
-CMD ["./entrypoint.sh"]
+# Use /bin/bash explicitly to execute the script
+CMD ["/bin/bash", "./entrypoint.sh"]
