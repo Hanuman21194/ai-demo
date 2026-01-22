@@ -1,6 +1,9 @@
+openai
+python-dotenv
 fastapi
 uvicorn
+pydantic
 streamlit
 requests
-python-dotenv
-openai
+wikipedia
+python-docx
