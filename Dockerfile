@@ -22,6 +22,7 @@ ENV OPENAI_API_KEY=""
 ENV gpt_model=""
 ENV SYSTEM_PROMPT=""
 
+RUN dos2unix entrypoint.sh && chmod +x entrypoint.sh
 # Expose the ports for both apps
 EXPOSE 8000
 EXPOSE 8501
