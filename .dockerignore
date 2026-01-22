@@ -1,0 +1,13 @@
+.git
+.gitignore
+__pycache__/
+*.pyc
+*.log
+.venv
+app.py
+aws_bedrock_test.py
+fast_api_models.py
+fast_api.py
+README
+test.py
+test_function_calling.py
